@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+  <title></title>
+
+</head>
+
+<body onload='onload()' style='position:absolute;padding:0; margin:0; height: 100%; width:100%;overflow:hidden;'>
+
+<canvas id="gameCanvas" ></canvas>
+
+
+
+  <script type='text/javascript'>
+
+var position_y = 0;
+var position_x = 0;
+
+
+var canvas = document.getElementById('gameCanvas');
+var ctx = canvas.getContext("2d");
+
+
+var fps = 0, now, lastUpdate = (new Date)*1;
+
+// The higher this value, the less the FPS will be affected by quick changes
+// Setting this to 1 will show you the FPS of the last sampled frame only
+var fpsFilter = 50;
+
+
+  var land = {
+  		load: function(){
+        
+  			canvas.width = canvas.parentNode.clientWidth;
+  			canvas.height = canvas.parentNode.clientHeight;
+  			position_y = canvas.height/2;
+  			position_x = canvas.width/2;
+  			ctx.fillStyle = '#080000';
+  			ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#000";
+  			ctx.font = "12pt Arial";
+        
+  			
+  		},
+
+  		update: function(){
+
+
+
+  		}
+
+  }
+
+
+var v1 = 0;
+var v2 = 0;
+// 0, 78, 156, 
+
+  var character = {
+		body:null,
+		head:null,
+    breath: false,
+    bodyturn: 0,
+    headturn: 0,
+    walkdown: false,
+    walkup: false,
+    walkleft: false,
+    walkright: false,
+
+  		load: function(){
+  			character.body = new Image();
+  			character.body.src = 'img/lk.gif';
+        character.head = new Image();
+        character.head.src = 'img/heads.png';
+  		},
+
+      update: function(){ 
+
+        if(v2>=8){
+          v2 = 0;
+        }
+
+        hx = 50*v1;
+        hy = 50*v2;
+
+        bx = 44*v2;
+        by = 80*v1;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(character.body, bx, 80, 45, 75, position_x, position_y, 50, 75);      
+        ctx.drawImage(character.head, 0, 0, 43, 49, position_x, position_y-32, 50, 58);
+
+
+      },
+
+      breath: function(){
+          ctx.drawImage(character.body, 101, 128, 94, 116, position_x, position_y, 66, 74); 
+          ctx.drawImage(character.head, 0, 498, 43, 49, position_x+18, position_y-31, 50, 58);  
+      }
+
+
+  }
+
+
+function update() {
+	
+    character.update();
+    // fps++;
+    // ctx.fillText(fps, 10, 20);
+    setTimeout( update, 1000/60 );
+}
+
+function checkposition(){
+  console.log(v1,v2);
+}
+
+function updateposition(v_1, v_2){
+  ctx.clearRect(0,10,55, 25);
+  v1 = v_1;
+  v2 = v_2;
+}
+
+
+
+
+
+var plus = 1;
+
+    function checkKey(e) 
+         {
+
+    e = e || window.event;
+  var code = e.keyCode;
+      switch(code)
+      {
+      case 40:
+      //down
+      v2 -=plus;
+      break;
+      case 38:
+      //up
+      v2 +=plus;
+      break;    
+      case 39:
+      //right
+      v1 -=plus;
+      break;    
+      case 37:
+      //left
+      v1 +=plus;
+      break;  
+      default:  
+      // change_position(1); 
+      }     
+  
+    }   
+
+
+
+  document.onkeydown = checkKey;
+  document.onkeyup = checkKeys;
+
+
+
+
+function drawFrame(){
+  // ... draw the frame ...
+  var thisFrameFPS = 1000 / ((now=new Date) - lastUpdate);
+  if (now!=lastUpdate){
+    fps += (thisFrameFPS - fps) / fpsFilter;
+    lastUpdate = now;
+  }
+
+  setTimeout( drawFrame, 1 );
+}
+
+var fpsOut = document.getElementById('fps');
+setInterval(function(){
+  ctx.clearRect(0,10,55, 25);
+  ctx.fillText(fps.toFixed(0) + "fps" , 5,30);
+}, 1000); 
+
+
+function onload(){
+  drawFrame();  
+  land.load();
+  character.load();
+  update(); 
+}
+
+
+
+  </script>
+</body>
+</html>

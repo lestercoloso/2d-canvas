@@ -1,0 +1,250 @@
+
+
+<!doctype html>
+<html>
+<head>
+  <title></title>
+  <script type='text/javascript'>
+
+
+
+
+var a = 1;
+var b = 0;
+var canvas = null;
+var body = null;
+var head = null;
+var dagger = null;
+var ctx = null;
+var imageReady = false;
+var y = 300;
+var v = 8;
+var x = 403;
+
+var canvas_height = 0;
+var canvas_width = 0;
+
+
+
+
+  // function writeMessage(canvas, message) {
+  //   var context = canvas.getContext('2d');
+  //   context.clearRect(0, 0, canvas.width, canvas.height);
+  //   context.font = '18pt Calibri';
+  //   context.fillStyle = 'black';
+  //   context.fillText(message, 10, 25);
+  // }
+  // function getMousePos(canvas, evt) {
+  //   var rect = canvas.getBoundingClientRect();
+  //   return {
+  //     x: evt.clientX - rect.left,
+  //     y: evt.clientY - rect.top
+  //   };
+  // }
+
+function onload() {
+  canvas = document.getElementById('gameCanvas');
+  ctx = canvas.getContext("2d");
+  body = new Image();
+  body.src = 'img/kg.png';
+  body.onload = loaded();
+  head = new Image();
+  head.src = 'img/heads.png';
+  head.onload = loaded();
+  dagger = new Image();
+  dagger.src = 'img/kg_dagger.png';
+  dagger.onload = loaded();
+  resize();
+
+  // canvas.addEventListener('mousemove', function(evt) {
+  //   var mousePos = getMousePos(canvas, evt);
+  //   var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+  //   writeMessage(canvas, message);
+  // }, false);
+  
+}
+
+
+
+function loaded() {
+    imageReady = true;
+    setTimeout( update, 1000 / 60 );
+}
+
+
+
+function resize() {
+  canvas.width = canvas.parentNode.clientWidth;
+  canvas.height = canvas.parentNode.clientHeight;
+
+	position_y = canvas.height/2;
+	position_x = canvas.width/2;
+
+  redraw();
+}
+
+function redraw() {
+    ctx.fillStyle = '#080000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+ctx.font = "12pt Arial";
+ctx.fillText(frame+0 , 20,190);
+//walk down
+switch(frame)
+{
+case 1:
+var h_x = 21+position_x-3;
+var h_y = 4+position_y-30;
+break;
+case 2:
+var h_x = 21+position_x-3;
+var h_y = 0+position_y-30;
+break;
+case 3:
+var h_x = 20+position_x-3;
+var h_y = 2+position_y-30;
+break;
+case 5:
+var h_x = 17+position_x-3;
+var h_y = 3+position_y-30;
+break;
+default:
+var h_x = 16+position_x-3;
+var h_y = 2+position_y-30;
+}
+//done here
+
+
+// console.log(frame);
+switch(a)
+{
+//walk down
+
+case 2:
+ctx.drawImage(body, 101*frame, 128, 94, 116, position_x, position_y, 66, 74);	 
+ctx.drawImage(head, 0, 498, 43, 49, h_x, h_y+1, 50, 54);	
+  break;
+//walk up  
+case 3:
+ctx.drawImage(body, 101*frame, 614, 94, 116, position_x, position_y, 66, 74);	 
+ctx.drawImage(head, 200, 498, 43, 49, h_x, h_y+1, 50, 54);	
+  break;
+ case 4: 
+ctx.drawImage(body, 101*frame, 370, 94, 116, position_x, position_y, 66, 74);	 
+ctx.drawImage(head, 103, 498, 43, 49, h_x+5, h_y+3, 50, 54);
+  break; 
+ case 5:
+ctx.drawImage(body, 101*frame, 370, 94, 116, position_x, position_y, 66, 74);	 
+ctx.drawImage(head, 103, 498, 43, 49, h_x+5, h_y+3, 50, 54);	
+  break; 
+//attack
+case 6:
+//ctx.rotate(90 * Math.PI / 180); 
+ctx.drawImage(body, 101*frame, 1490, 94, 116, position_x, position_y, 66, 74);	 
+ctx.drawImage(head, 51.5, 498, 43, 49,h_x+5-23, h_y+3, 50, 54);
+//ctx.drawImage(dagger, 88*frame, 460, 88, 46, x-8, y-15, 50, 54);		
+  break;
+default:
+ctx.drawImage(body, 0, 0, 94, 116, position_x+7, position_y, 66, 74);	 
+ctx.drawImage(head, 0, 498, 43, 49, position_x+14, position_y-32, 50, 54+frame*0.3);	
+}
+
+//ctx.drawImage(img, frame*96, 0, 96, 54, canvas.width/2 - 48, canvas.height/2 - 48, 96, 54);
+
+
+
+}
+
+
+
+
+var frame = 0;
+
+function update() {
+if(a==6){
+	v=10;
+}else{
+	v=8;
+}
+var walk = 4;
+    redraw();
+    frame +=1;
+    if (frame == v) frame = 0;
+    setTimeout( update, 1000/v );
+	where_x = 1;
+	if(a==2){
+	// y +=walk;
+	}	
+	if(a==3){
+	// y -=walk;
+	}	
+	if(a==4){
+	// x +=walk;
+	}
+	if(a==5){
+	// x -=walk;
+	}
+}
+
+
+function change_position(r){
+  a = r;
+}
+
+    function checkKey(e) 
+         {
+
+    e = e || window.event;
+	var code = e.keyCode;
+			switch(code)
+			{
+			case 40:
+			//down
+			change_position(2); 
+			break;
+			case 38:
+			//up
+			change_position(3); 
+			break;		
+			case 39:
+			//right
+			change_position(4); 
+			break;		
+			case 37:
+			//left
+			change_position(5); 
+			break;	
+			case 65:
+			//attack
+			change_position(6); 
+			//v=6;
+			break;
+			default:	
+			change_position(1); 
+			}			
+	
+		}   
+
+		function checkKeys(e) {
+
+          e = e || window.event;
+          var code = e.keyCode;	
+          change_position(1); 
+		}
+
+
+
+  document.onkeydown = checkKey;
+	document.onkeyup = checkKeys;
+
+
+
+  </script>
+</head>
+
+<body onload='onload()' style='position:absolute;padding:0; margin:0; height: 100%; width:100%;overflow:hidden;'>
+
+<canvas id="gameCanvas"></canvas>
+
+</body>
+</html>
